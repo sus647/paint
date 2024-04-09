@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Let's Paint</title>
+  <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
+    integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
+    crossorigin="anonymous">
+  <style>
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #canvas {
+      border: 2px solid #000;
+      cursor: crosshair;
+      margin: 20px auto; /* Center the canvas */
+    }
+
+    .form-group {
+      text-align: center; /* Align form elements to center */
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn-group .btn {
+      margin: 0 5px; /* Add some spacing between buttons */
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <canvas id="canvas" width="800" height="600"></canvas>
+    <div class="form-group">
+      <label class="form-label" for="brush-size">Brush Size</label>
+      <input class="slider" id="brush-size" type="range" min="2" max="15" value="5">
+    </div>
+    <div class="btn-group">
+      <button class="btn" id="blue-brush" data-color="blue"><i class="fas fa-paint-brush" style="color: blue;"></i></button>
+      <button class="btn" id="black-brush" data-color="black"><i class="fas fa-paint-brush" style="color: black;"></i></button>
+      <button class="btn" id="red-brush" data-color="red"><i class="fas fa-paint-brush" style="color: red;"></i></button>
+      <button class="btn" id="yellow-brush" data-color="yellow"><i class="fas fa-paint-brush" style="color: yellow;"></i></button>
+      <button class="btn" id="eraser"><i class="fas fa-eraser"></i></button>
+      <button class="btn" id="clean"><i class="far fa-file"></i></button>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+    let brushSize = 5;
+    let currentColor = 'black'; // Default color
+
+    function draw(e) {
+      if (!isDrawing) return;
+
+      ctx.lineWidth = brushSize;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = currentColor;
+
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
+
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+    }
+
+    canvas.addEventListener('mousedown', (e) => {
+      isDrawing = true;
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+    });
+
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', () => isDrawing = false);
+    canvas.addEventListener('mouseout', () => isDrawing = false);
+
+    document.getElementById('brush-size').addEventListener('change', (e) => {
+      brushSize = e.target.value;
+    });
+
+    document.getElementById('blue-brush').addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent default button click behavior
+      currentColor = 'blue';
+    });
+
+    document.getElementById('black-brush').addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent default button click behavior
+      currentColor = 'black';
+    });
+
+    document.getElementById('red-brush').addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent default button click behavior
+      currentColor = 'red';
+    });
+
+    document.getElementById('yellow-brush').addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent default button click behavior
+      currentColor = 'yellow';
+    });
+
+    document.getElementById('eraser').addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent default button click behavior
+      currentColor = '#fff'; // Set color to white for eraser
+      canvas.style.cursor = 'crosshair'; // Change cursor back to crosshair
+    });
+
+    document.getElementById('clean').addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent default button click behavior
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    });
+  </script>
+</body>
+</html>
